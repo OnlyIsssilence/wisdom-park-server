@@ -1,0 +1,33 @@
+
+CREATE TABLE `yuedu_read_plan` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id key',
+  `experience_type` varchar(64) DEFAULT '' COMMENT '计划类型,用于区分体验课的唯一标识,同一type的体验课,用户只能参加一次',
+  `plan_type` tinyint(3) NOT NULL DEFAULT 0 COMMENT '体验计划于正式计划的区分,0:体验计划 1:正式计划',
+  `plan_order` bigint(20) DEFAULT 0 COMMENT '计划优先级,越大越靠前',
+  `topics` VARCHAR (64) DEFAULT '' COMMENT '话题类型主键ID,一个类型主键可以包含多个话题,多个话题逗号隔开',
+  `buy_content` VARCHAR (24) comment '购买文案,最长不超过6个字',
+  `banner` VARCHAR (128) comment '计划banner url',
+  `introduction` VARCHAR(128) default '' comment '计划简介',
+  `plan_name` VARCHAR(128) default '' comment '计划名称',
+  `sale_start_time` bigint(20) NOT NULL comment '售卖开始时间',
+  `sale_end_time` bigint(20) NOT NULL comment '售卖结束时间',
+  `read_start_time` bigint(20) NOT NULL comment '阅读开始时间',
+  `read_end_time` bigint(20) NOT NULL comment '阅读结束时间',
+  `status` tinyint(5) DEFAULT 0 comment '计划状态,0:预售 1:售卖中 2:售卖结束等待阅读 3:阅读中 4:阅读结束下架状态 5:其他',
+  `show_price` bigint(20) default 0 comment '显示价格 单位为分',
+  `transaction_price` bigint(20) default 0 comment '成交价格 单位为分',
+  `team_price` bigint(20) default 0 comment '拼团价格 单位为分',
+  `backup_price` bigint(20) not null default 0 comment '备用价格 单位为分',
+  `real_register_num` bigint(20) default 0 comment '真实的报名人数，前端显示用此字段+报名基数',
+  `base_register_num` bigint(20) default 0 comment '报名基数',
+  `media_pic_type_id` VARCHAR(64) default '' comment '宣传图片类型主键ID',
+  `clock_in_pic_type_id` varchar (64) default '' comment '打卡图片类型用户指定的打卡图片池ID',
+  `market_activity_ids` VARCHAR(64) default '' comment '此计划的运营活动主键ID,多个id以逗号分开',
+  `invite_pic` VARCHAR(128) default '' comment '邀请有礼或返现分享的背景图',
+  `push_plan_url` VARCHAR(256) default '' COMMENT '推送计划详情页url',
+  `plan_qr_code` VARCHAR(256) default '' COMMENT '计划渠道二维码',
+  `properties` varchar(2048) comment 'properties',
+  `db_create_time` timestamp NOT NULL DEFAULT '2018-01-01 00:00:00' COMMENT 'create time of record, for db',
+  `db_update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,  PRIMARY KEY(`id`)
+) ENGINE=INNODB DEFAULT charset=utf8mb4
+/* BF=id, POLICY=hashed, STARTID=1, ASSIGNIDTYPE=USB */;
