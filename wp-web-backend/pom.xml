@@ -12,11 +12,14 @@
     <name>wp-web-backend</name>
     <description>backend web for wisdom park</description>
 
+    <packaging>jar</packaging>
+
     <properties>
         <java.version>1.8</java.version>
     </properties>
 
     <dependencies>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
@@ -25,7 +28,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
