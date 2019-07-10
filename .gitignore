@@ -1,0 +1,9 @@
+# Created by .ignore support plugin (hsz.mobi)
+.idea/
+wp-common/wp-common.iml
+wp-dao/wp-dao.iml
+wp-entity/wp-entity.iml
+wp-manager/wp-manager.iml
+wp-server.iml
+/wp-web-internal/target/
+/wp-web-backend/target/
