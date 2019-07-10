@@ -105,7 +105,7 @@ CREATE TABLE `wp_role_permission` (
   `operate_menu_ids` varchar(128) default '' COMMENT '可操作的页面主键id集合 多个以逗号隔开',
   `operate_button_ids` varchar(512) default '' COMMENT '可操作的按钮主键id集合 多个以逗号隔开',
   `app_grant_type` tinyint(3) default 0 COMMENT 'app端登录的角色 1内控端app管理员登录 0内控端app维修员登录 默认0',
-  `max_order_num` bigint(16) default 0 comment '工程段最多接单数量',
+  `max_order_num` bigint(16) default 0 comment '工程端最多接单数量',
   PRIMARY KEY(`id`)
 ) ENGINE=INNODB DEFAULT charset=utf8mb4 comment ='角色操作权限表';
 
@@ -127,3 +127,164 @@ CREATE TABLE `wp_user_info` (
   PRIMARY KEY(`id`),
   unique key ukPhone(phone)
 ) ENGINE=INNODB DEFAULT charset=utf8mb4 comment ='账户信息表';
+
+
+CREATE TABLE `wp_equip_system_class` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id key',
+  `properties` varchar(2048) comment 'properties',
+  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'create time of record, for db',
+  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `id_code` varchar(36) NOT NULL COMMENT '设备系统编号',
+  `name` varchar(64) not null COMMENT '设备系统名称',
+  `introduction` varchar(128) default '' COMMENT '设备系统说明',
+  `status` tinyint(3) not null default 1 COMMENT '启用状态 1 启用 0 禁用 默认1',
+  `belong_type` tinyint(3) not null default 0 COMMENT '设备系统类型的使用类型 0全局性质数据 1具体组织的数据 默认0',
+  `dept_id` bigint(20) not null COMMENT '设备系统类别所属组织主键id',
+  `creator_account_id` bigint(20) default 0 comment '创建者主键id',
+  `audit_status` int not null default 0 COMMENT '只针对type=1时有用 审核状态 待定 ',
+  PRIMARY KEY(`id`),
+  unique key code_type_dept(id_code, belong_type, dept_id)
+) ENGINE=INNODB DEFAULT charset=utf8mb4 comment ='全局设备系统类别表';
+
+CREATE TABLE `wp_global_machine_class` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id key',
+  `properties` varchar(2048) comment 'properties',
+  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'create time of record, for db',
+  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `id_code` varchar(36) NOT NULL COMMENT '机房类别编号',
+  `name` varchar(64) not null COMMENT '设备系统名称',
+  `introduction` varchar(128) default '' COMMENT '设备系统说明',
+  `status` tinyint(3) not null default 1 COMMENT '启用状态 1 启用 0 禁用 默认1',
+  `dept_id` bigint(20) not null COMMENT '所属组织主键id',
+  `creator_account_id` bigint(20) default 0 comment '创建者主键id',
+  `equip_system_class_id` bigint(20) not null comment '所属全局系统设备类别主键id',
+  PRIMARY KEY(`id`),
+  unique key ukIdCode(id_code)
+) ENGINE=INNODB DEFAULT charset=utf8mb4 comment ='全局机房类别表';
+
+CREATE TABLE `wp_global_equip_class` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id key',
+  `properties` varchar(2048) comment 'properties',
+  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'create time of record, for db',
+  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `id_code` varchar(36) NOT NULL COMMENT '机房类别编号',
+  `name` varchar(64) not null COMMENT '设备系统名称',
+  `introduction` varchar(128) default '' COMMENT '设备系统说明',
+  `status` tinyint(3) not null default 1 COMMENT '启用状态 1 启用 0 禁用 默认1',
+  `dept_id` bigint(20) not null COMMENT '所属组织主键id',
+  `creator_account_id` bigint(20) default 0 comment '创建者主键id',
+  `equip_system_class_id` bigint(20) not null comment '所属全局系统设备类别主键id',
+  `global_machine_class_id` bigint(20) not null comment '所属全局机房类别主键id',
+  PRIMARY KEY(`id`),
+  unique key ukIdCode(id_code)
+) ENGINE=INNODB DEFAULT charset=utf8mb4 comment ='全局设备类别表';
+
+CREATE TABLE `wp_org_machine_info` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id key',
+  `properties` varchar(2048) comment 'properties',
+  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'create time of record, for db',
+  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `id_code` varchar(36) NOT NULL COMMENT '企业机房编号',
+  `name` varchar(64) not null COMMENT '企业机房名称',
+  `address` varchar(128) default '' COMMENT '企业机房地址',
+  `audit_status` int not null default 0 COMMENT '审核状态 待定',
+  `dept_id` bigint(20) not null COMMENT '所属组织主键id',
+  `creator_account_id` bigint(20) default 0 comment '创建者主键id',
+  `equip_system_class_id` bigint(20) not null comment '所属企业系统设备类别主键id',
+  `global_machine_class_id` bigint(20) not null comment '所属全局机房类别主键id',
+  PRIMARY KEY(`id`),
+  unique key ukIdCode(id_code)
+) ENGINE=INNODB DEFAULT charset=utf8mb4 comment ='企业机房信息表';
+
+CREATE TABLE `wp_org_device_info` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id key',
+  `properties` varchar(2048) comment 'properties',
+  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'create time of record, for db',
+  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `id_code` varchar(36) NOT NULL COMMENT '设备编号',
+  `name` varchar(64) not null COMMENT '设备名称',
+  `audit_status` int not null default 0 COMMENT '审核状态 待定',
+  `dept_id` bigint(20) not null COMMENT '所属组织主键id',
+  `creator_account_id` bigint(20) default 0 comment '创建者主键id',
+  `equip_system_class_id` bigint(20) not null comment '所属企业系统设备类别主键id',
+  `org_machine_id` bigint(20) not null comment '所属企机房主键id',
+  `standard_type` varchar(32) default '' comment '规格型号',
+  `device_level` varchar(10) default '' comment '设备级别',
+  `produce_company` varchar(64) default '' comment '制造单位',
+  `factory_time` bigint(20) default 0 comment '出厂日期',
+  `factory_no` varchar(20) default '' comment '出厂编号',
+  `use_time` timestamp DEFAULT CURRENT_TIMESTAMP comment '使用日期',
+  `check_time` timestamp DEFAULT CURRENT_TIMESTAMP comment '验收日期',
+  `protect_maintain_time` int default 0 comment '保修期限 单位为月',
+  `extra_params` varchar(512) default '' comment '附加技术参数 json格式字符串',
+  `extraFileIds` varchar(128) default '' comment '附加文件主键id 多个以逗号隔开',
+  `extraDevices` varchar(512) default '' comment '附加配件的参数 json格式字符串',
+  PRIMARY KEY(`id`),
+  unique key ukIdCode(id_code)
+) ENGINE=INNODB DEFAULT charset=utf8mb4 comment ='企业设备信息表';
+
+CREATE TABLE `wp_global_maintain_standard` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id key',
+  `properties` varchar(2048) comment 'properties',
+  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'create time of record, for db',
+  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `id_code` varchar(36) NOT NULL COMMENT '操作编号',
+  `name` varchar(64) not null COMMENT '操作名称',
+  `dept_id` bigint(20) not null COMMENT '所属组织主键id',
+  `creator_account_id` bigint(20) default 0 comment '创建者主键id',
+  `operator_type` tinyint(3) not null default 0 COMMENT '设备的操作类型 0 维保 1 巡检 默认0',
+  `equip_system_class_id` bigint(20) default 0 COMMENT '所属全局设备系统类别主键id',
+  `global_machine_class_id` bigint(20) default 0 comment '所属全局机房类别主键id',
+  `global_equip_class_id` bigint(20) default 0 comment '所属全局设备类别主键id',
+  PRIMARY KEY(`id`),
+  unique key ukIdCodeType(id_code, operator_type)
+) ENGINE=INNODB DEFAULT charset=utf8mb4 comment ='全局维修标准表';
+
+CREATE TABLE `wp_global_maintain_item` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id key',
+  `properties` varchar(2048) comment 'properties',
+  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'create time of record, for db',
+  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `id_code` varchar(36) NOT NULL COMMENT '操作编号',
+  `name` varchar(64) not null COMMENT '操作名称',
+  `dept_id` bigint(20) not null COMMENT '所属组织主键id',
+  `creator_account_id` bigint(20) default 0 comment '创建者主键id',
+  `operator_type` tinyint(3) not null default 0 COMMENT '设备的操作类型 0 维保 1 巡检 默认0',
+  `equip_system_class_id` bigint(20) default 0 COMMENT '所属全局设备系统类别主键id',
+  `global_machine_class_id` bigint(20) default 0 comment '所属全局机房类别主键id',
+  `global_equip_class_id` bigint(20) default 0 comment '所属全局设备类别主键id',
+  PRIMARY KEY(`id`),
+  unique key ukIdCodeType(id_code, operator_type)
+) ENGINE=INNODB DEFAULT charset=utf8mb4 comment ='全局维保具体条目信息表';
+
+CREATE TABLE `wp_global_maintain_plan` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id key',
+  `properties` varchar(2048) comment 'properties',
+  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'create time of record, for db',
+  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `id_code` varchar(36) NOT NULL COMMENT '操作编号',
+  `name` varchar(64) not null COMMENT '操作名称',
+  `dept_id` bigint(20) not null COMMENT '所属组织主键id',
+  `creator_account_id` bigint(20) default 0 comment '创建者主键id',
+  `equip_system_class_id` bigint(20) default 0 COMMENT '所属全局设备系统类别主键id',
+  `global_machine_class_id` bigint(20) default 0 comment '所属全局机房类别主键id',
+  `taskTimes` varchar(256) default '' comment '计划执行时间 分段存储开始/结束/是否可修改，可以有几段以list json格式存储',
+  `status` tinyint(3) default 1 comment '使用状态 0 禁用 1使用 默认1',
+  `introduction` varchar(128) default '' comment '描述',
+  PRIMARY KEY(`id`),
+  unique key ukIdCode(id_code)
+) ENGINE=INNODB DEFAULT charset=utf8mb4 comment ='全局维保计划表';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
